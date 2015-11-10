@@ -3,8 +3,9 @@
 owner=tomcat
 timeout=10
 export CATALINA_HOME=/opt/tomcat
-export CATALINA_OPTS="-server -Xms1024m -Xmx1024m"
+export CATALINA_OPTS="-server -Xms1024m -Xmx1024m -XX:MaxPermSize=512m -XX:PermSize=512m"
 export CATALINA_PID=$CATALINA_HOME/logs/tomcat.pid
+export JAVA_HOME=/opt/jdk1.7.0_45
 
 catalina() {
         if [ "$1" = "stop" ]
@@ -45,3 +46,4 @@ status)
         catalina $1
         ;;
 esac
+
