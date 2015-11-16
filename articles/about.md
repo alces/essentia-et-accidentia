@@ -1,0 +1,7 @@
+![](http://uploads7.wikiart.org/images/gustave-dore/don-quixote-33.jpg!Large.jpg)
+
+Number of servers, size of databases, and complexity of applications a contemporary enterprise IT environment is built upon are growing significantly every year, while the methods we're trying to cope with them are still essentionally the same. Things by which we've been getting our work done for decades don't help anymore. This new scale of operations cries for some kind of radically new soluctions, and we almost every day hear about a wonderful new solution, but most of them works well only in vendors' promotional videos.
+
+So, as F.Brooks put it 30 years ago, our tasks are hard and there're no signs of an easy way out seen ever on the horizon. It seemed to be right then, and it's ever more right now. We're a squad of Don Quixotes fighting against a full field of windmills. And name of this field is Total Complexity.
+
+If you're here searching for a magic recipe, I have to admit that, alas, I used to know a lot of magic recipes, but for now I've forgotten all of them, because in our dull reality they work awfully bad. I'm simply an old knight with a barber's basin instead of helmet on his head trying to get across an age when chivalry become so comical.
