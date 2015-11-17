@@ -20,9 +20,10 @@ xml2perms = {usr, xml ->
 }
 
 root = Hudson.instance.root
+slrp = new XmlSlurper()
 
 println 'Global: ' + xml2perms(USERNAME,
-	new XmlSlurper().parse(new File(root, 'config.xml')).authorizationStrategy).join(', ')
+	slrp.parse(new File(root, 'config.xml')).authorizationStrategy).join(', ')
 
 println new File(root, 'jobs').listFiles().findAll {
 	it.directory
@@ -33,7 +34,7 @@ println new File(root, 'jobs').listFiles().findAll {
 }.collect {
 	[name: it.parentFile.name,
 	perm: xml2perms(USERNAME,
-		new XmlSlurper().parse(it).properties.'hudson.security.AuthorizationMatrixProperty')]
+		slrp.parse(it).properties.'hudson.security.AuthorizationMatrixProperty')]
 }.findAll {
 	it.perm
 }.collect {
