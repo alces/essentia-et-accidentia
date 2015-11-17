@@ -13,7 +13,7 @@ xml2perms = {usr, xml ->
 	xml.permission.collect {
 		it.text().split(':')
 	}.findAll {
-		it[1] == USERNAME
+		it[1] == usr
 	}.collect {
 		it[0].replaceAll(/^[a-z.]+/, '')
 	}
@@ -21,7 +21,7 @@ xml2perms = {usr, xml ->
 
 root = Hudson.instance.root
 
-println 'Global: ' + xml2perms(usr,
+println 'Global: ' + xml2perms(USERNAME,
 	new XmlSlurper().parse(new File(root, 'config.xml')).authorizationStrategy).join(', ')
 
 println new File(root, 'jobs').listFiles().findAll {
@@ -32,7 +32,8 @@ println new File(root, 'jobs').listFiles().findAll {
 	it.exists()
 }.collect {
 	[name: it.parentFile.name,
-	perm: xml2perms(usr, new XmlSlurper().parse(it).properties.'hudson.security.AuthorizationMatrixProperty')]
+	perm: xml2perms(USERNAME,
+		new XmlSlurper().parse(it).properties.'hudson.security.AuthorizationMatrixProperty')]
 }.findAll {
 	it.perm
 }.collect {
