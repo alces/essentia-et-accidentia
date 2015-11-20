@@ -27,7 +27,7 @@ def hosts_list(host_name):
  
 Search in Active Directory understands simple wildcards, so it's possible to get a list of all our git servers by writing something like this: `hosts_list('git*')`
 
-Format of a record returned by `search_s` method is quite tricky: it's a list of a Common Name as its first element and a dict of requested values as the second. Each value in this dict is a list itself. Ergo, to actually convert a result of running `hosts_list` fuction to something Fabric could treat as a correct list of hosts, you have to tweak output of `hosts_list` e.g. that way:
+Format of a record returned by `search_s` method is quite tricky: it's a list of a Distinguished Name as its first element and a dict of requested values as the second. Each value in this dict is a list itself. Ergo, to actually convert a result of running `hosts_list` fuction to something Fabric could treat as a correct list of hosts, you have to tweak output of `hosts_list` e.g. that way:
 
 ```
 env.hosts = map(lambda v: v[1]['name'][0], hosts_list('git*'))
