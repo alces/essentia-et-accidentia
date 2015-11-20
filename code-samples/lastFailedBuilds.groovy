@@ -23,10 +23,10 @@ println hud.nodes.collect {
 }.findAll {
 	! BUILD_NODE || it.name == BUILD_NODE
 }.collect {
-  it.builds.findAll {
-    isRecent = it.timeInMillis + it.duration > startTm
-  	isRecent && ! it.inProgress && it.result == Result.FAILURE
-  }.collect {
-    "$hud.rootUrl$it.url\n\t" + it.getLog(logLines).join('\n\t')
-  }
+	it.builds.findAll {
+		isRecent = it.timeInMillis + it.duration > startTm
+		isRecent && ! it.inProgress && it.result == Result.FAILURE
+	}.collect {
+		"$hud.rootUrl$it.url\n\t" + it.getLog(logLines).join('\n\t')
+	}
 }.flatten().join('\n\n')
