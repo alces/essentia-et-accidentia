@@ -33,10 +33,11 @@ flat = lambda lst: reduce(lambda l, e: l + flat(e) if isinstance(e, list) else l
 # search for a group by filter
 grp_search = lambda fltr: ldapSrv.search_s('ou=Resources,dc=example,dc=com', ldap.SCOPE_SUBTREE, '(&(objectclass=group)(%s))' % fltr, ['dn'])
 
-# search for members in LDAP groups and return a nested list of them
-def grp_members(gdn):
-	return [grp_members(grp[0]) for grp in grp_search('memberOf=%s' % gdn)
-		] + ldapSrv.search_s('ou=Users,dc=example,dc=com', ldap.SCOPE_SUBTREE, '(&(objectclass=person)(memberOf=%s))' % gdn, [param['-f']])
+# search for users inside a given group
+usr_search = lambda grpDN: ldapSrv.search_s('ou=Users,dc=example,dc=com', ldap.SCOPE_SUBTREE, '(&(objectclass=person)(memberOf=%s))' % grpDN, [param['-f']])
+
+# get a nested list of the members of a group with a given DN
+grp_members = lambda grpDN: [grp_members(grp[0]) for grp in grp_search('memberOf=%s' % grpDN)] + usr_search(grpDN)
 
 grp = grp_search('name=%s' % param['-g'])
 if not grp:
