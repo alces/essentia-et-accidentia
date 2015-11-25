@@ -37,7 +37,10 @@ grp_search = lambda fltr: ldapSrv.search_s('ou=Resources,dc=example,dc=com', lda
 usr_search = lambda grpDN: ldapSrv.search_s('ou=Users,dc=example,dc=com', ldap.SCOPE_SUBTREE, '(&(objectclass=person)(memberOf=%s))' % grpDN, [param['-f']])
 
 # get a nested list of the members of a group with a given DN
-grp_members = lambda grpDN: [grp_members(grp[0]) for grp in grp_search('memberOf=%s' % grpDN)] + usr_search(grpDN)
+def grp_members(grpDN):
+	childGroups = grp_search('memberOf=%s' % grpDN)
+	childUsers = usr_search(grpDN)
+	return [grp_members(grp[0]) for grp in childGroups] + childUsers
 
 grp = grp_search('name=%s' % param['-g'])
 if not grp:
