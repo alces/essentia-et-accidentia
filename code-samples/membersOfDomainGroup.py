@@ -38,10 +38,18 @@ def flatten(aTree):
 	return reduce(add_next, aTree, [])
 
 # search for a group by filter
-grp_search = lambda fltr: ldapSrv.search_s('ou=Resources,dc=example,dc=com', ldap.SCOPE_SUBTREE, '(&(objectclass=group)(%s))' % fltr, ['dn'])
+def grp_search(filterExpr):
+	return ldapSrv.search_s('ou=Resources,dc=example,dc=com',
+		ldap.SCOPE_SUBTREE,
+		'(&(objectclass=group)(%s))' % filterExpr,
+		['dn'])
 
 # search for users inside a given group
-usr_search = lambda grpDN: ldapSrv.search_s('ou=Users,dc=example,dc=com', ldap.SCOPE_SUBTREE, '(&(objectclass=person)(memberOf=%s))' % grpDN, [param['-f']])
+def usr_search(grpDN):
+	return ldapSrv.search_s('ou=Users,dc=example,dc=com',
+		ldap.SCOPE_SUBTREE,
+		'(&(objectclass=person)(memberOf=%s))' % grpDN,
+		[param['-f']])
 
 # get a nested list of the members of a group with a given DN
 def grp_members(grpDN):
