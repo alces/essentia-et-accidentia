@@ -28,7 +28,14 @@ ldapSrv.bind_s('bind-user@example.com', 'bindPasSw0rd')
 ldap_output = lambda r: r[1][param['-f']][0]
 
 # make a flat list from a list of lists
-flat = lambda lst: reduce(lambda l, e: l + flat(e) if isinstance(e, list) else l + [e], lst, [])
+def flatten(aTree):
+	# add next element to a list
+	def add_next(aList, anElem):
+		if isinstance(anElem, list):
+			return aList + flatten(anElem)
+		else:
+			return aList + [anElem]
+	return reduce(add_next, aTree, [])
 
 # search for a group by filter
 grp_search = lambda fltr: ldapSrv.search_s('ou=Resources,dc=example,dc=com', ldap.SCOPE_SUBTREE, '(&(objectclass=group)(%s))' % fltr, ['dn'])
@@ -47,4 +54,4 @@ if not grp:
 	sys.stderr.write("Group '%s' isn't found in LDAP\n" % param['-g'])
 	sys.exit(2)
 
-print param['-s'].join(sorted(set(ldap_output(res) for res in flat(grp_members(grp[0][0])) if res)))
+print param['-s'].join(sorted(set(ldap_output(res) for res in flatten(grp_members(grp[0][0])) if res)))
