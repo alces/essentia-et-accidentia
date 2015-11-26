@@ -3,7 +3,7 @@
 # print a list of members of a domain group
 
 param = {
-	'-f':	'mail', # field name
+	'-a':	'mail', # attribute name
 	'-s':	'\n', # separator
 }
 
@@ -18,14 +18,14 @@ try:
 		sys.stderr.write("-g parameter is required\n")
 		sys.exit(1)
 except getopt.GetoptError:
-	sys.stderr.write("Usage: %s -g groupName [ -f LDAP field ] [ -s output separator ]\n" % sys.argv[0])
+	sys.stderr.write("Usage: %s -g groupName [ -f LDAP attribute ] [ -s output separator ]\n" % sys.argv[0])
 	sys.exit(1)
 
 ldapSrv = ldap.initialize('ldap://dc.example.com')
 ldapSrv.bind_s('bind-user@example.com', 'bindPasSw0rd')
 
 # get output filed from ldap results
-ldap_output = lambda r: r[1][param['-f']][0]
+ldap_output = lambda r: r[1][param['-a']][0]
 
 # make a flat list from a list of lists
 def flatten(aTree):
@@ -49,7 +49,7 @@ def usr_search(grpDN):
 	return ldapSrv.search_s('ou=Users,dc=example,dc=com',
 		ldap.SCOPE_SUBTREE,
 		'(&(objectclass=person)(memberOf=%s))' % grpDN,
-		[param['-f']])
+		[param['-a']])
 
 # get a nested list of the members of a group with a given DN
 def grp_members(grpDN):
