@@ -18,9 +18,7 @@ import hudson.model.*
 
 hud = Hudson.instance
 
-println hud.nodes.collect {
-	it.toComputer()
-}.findAll {
+println hud.computers.findAll {
 	! BUILD_NODE || it.name == BUILD_NODE
 }.collect {
 	it.builds.findAll {
