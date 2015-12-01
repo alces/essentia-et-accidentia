@@ -1,10 +1,12 @@
-/**
- * list global permissions and permissions on jobs a given user has
- *
- * required Scripler parameters:
- * USERNAME (String) - login of user under inverstigation
- *
- */
+/*** BEGIN META {
+	"name": "List users' permissions",
+	"comment": "List global permissions and permissions on jobs a given user has",
+	"parameters": ["USERNAME"],
+	"core": "1.300",
+	"authors": [
+		{name : "Alexey Zalesnyi"}
+	]
+} END META**/
 
 import hudson.model.Hudson
 

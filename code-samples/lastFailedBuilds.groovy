@@ -1,12 +1,12 @@
-/**
- * create report on last failed builds
- *
- * Scripler parameters:
- * HOURS_BACK (String) - how many hours we're going to dive into past
- * LOG_LINES  (String) - how many last lines of each build log we want to see
- * BUILD_NODE (String) - name of build node we're intersting in (set to empty String for all nodes)
- *
- */
+/*** BEGIN META {
+	"name": "Logs of the latest failed builds",
+	"comment": "Creates a report on the latest failed builds",
+	"parameters": ["HOURS_BACK", "LOG_LINES", "BUILD_NODE"],
+	"core": "1.300",
+	"authors": [
+		{name : "Alexey Zalesnyi"}
+	]
+} END META**/
 
 hoursBack = new Integer(HOURS_BACK)
 logLines = new Integer(LOG_LINES)
