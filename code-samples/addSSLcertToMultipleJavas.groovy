@@ -45,7 +45,7 @@ new File(JAVA_ROOT).listFiles().findAll {
     ['', 'jre'].collect {
         new File(dir, "$it/lib/security/cacerts")
     }
-}.findAll {
+}.flatten().findAll {
   it.exists()
 }.each {
   addCert(it)
