@@ -41,8 +41,10 @@ addCert = {keyFile ->
 
 new File(JAVA_ROOT).listFiles().findAll {
   it.directory
-}.collect {
-  new File(it, 'jre/lib/security/cacerts')
+}.collect {dir ->
+    ['', 'jre'].collect {
+        new File(dir, "$it/lib/security/cacerts")
+    }
 }.findAll {
   it.exists()
 }.each {
