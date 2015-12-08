@@ -29,7 +29,7 @@ addCert = {keyFile ->
   	keyStore.load(it, password)
   }
   found = keyStore.aliases().findAll {
-    keyStore.getCertificate(it).hashCode() == urlCert.hashCode()
+    keyStore.getCertificate(it) == urlCert
   }
   if (! found) {
     keyStore.setEntry(httpsSite.host, new KeyStore.TrustedCertificateEntry(urlCert), null)
