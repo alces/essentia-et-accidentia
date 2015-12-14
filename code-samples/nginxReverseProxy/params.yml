@@ -1,0 +1,2 @@
+nginx_mainline: true
+nginx_proxy_port: 8080

@@ -1,0 +1,44 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Install nginx and configure it as a reverse proxy and an HTTPS terminator
+  hosts: proxy
+  vars_files:
+  - params.yml
+  tasks:
+  - name: Install nginx repository
+    template:
+      src: nginx.repo.j2
+      dest: /etc/yum.repos.d/nginx.repo
+      mode: 0644
+
+  - name: Install nginx rpm
+    yum:
+      name: nginx
+
+  - name: Install SSL certificate and key
+    copy:
+      src: "server.{{ item }}"
+      dest: "/etc/nginx/server.{{ item }}"
+      mode: 0600
+    with_items:
+    - crt
+    - key
+
+  - name: Create nginx configuration
+    template:
+      src: nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+      mode: 0644
+    notify: restart nginx
+
+  - name: Start nginx service
+    service:
+      name: nginx
+      enabled: yes
+      state: started
+
+  handlers:
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
