@@ -37,6 +37,12 @@
       enabled: yes
       state: started
 
+  - name: Disable firewall
+    service:
+      name: "{{ 'firewalld' if ansible_distribution_major_version == '7' else 'iptables' }}"
+      enabled: no
+      state: stopped
+
   handlers:
   - name: restart nginx
     service:
