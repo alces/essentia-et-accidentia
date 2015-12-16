@@ -47,11 +47,14 @@ def flatten(aList):
         else:
             yield anElem
 
+# get a list of the ids of the elements' roles
+getRoles = lambda elem: map(lambda role: role.text, elem.findall('roles/role'))
+
 # get a list of roles having the role with a given name
 def whoHasRole(roleName):
 	return ((subRole, whoHasRole(roleId(subRole)))
 		for subRole in xmlRoot.findall('./roles/role')
-		if roleName in map(lambda elem: elem.text, subRole.findall('roles/role')))
+		if roleName in getRoles(subRole))
 
 secRoles = map(roleId,
 	flatten(map(lambda role: whoHasRole(role), primRoles)))
@@ -62,13 +65,9 @@ if allRoles:
 	print 'Roles:\n\t' + '\n\t'.join(allRoles)
 
 	# get users belonging to these roles
-	
-	# get a list of user's roles
-	usersRoles = lambda user: map(lambda role: role.text, user.findall('./roles/role'))
-	
 	users = [user.find('userId').text
 	for user in xmlRoot.findall('./userRoleMappings/userRoleMapping')
-	if allRoles & set(usersRoles(user))]
+	if allRoles & set(getRoles(user))]
 	
 	if users:
 		print 'Users:\n\t' + '\n\t'.join(set(users))
