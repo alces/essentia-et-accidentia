@@ -29,18 +29,32 @@ else:
 # get a list of role's privileges
 rolesPrivs = lambda role: map(lambda priv: priv.text, role.findall('./privileges/privilege'))
 
-primRoles = [role.find('id').text
+# get role id
+roleId = lambda role: role.find('id').text
+
+primRoles = [roleId(role)
 	for role in xmlRoot.findall('./roles/role')
 	if privId in rolesPrivs(role)]
 
 # get a list of roles having these roles
 
-# get a list of role's roles
-rolesRoles = lambda role: map(lambda elem: elem.text, role.findall('./roles/role'))
+# flatten a list of lists
+def flatten(aList):
+    for anElem in aList:
+        if hasattr(anElem, '__iter__') and not hasattr(anElem, 'split'):
+            for subElem in flatten(anElem):
+                yield subElem
+        else:
+            yield anElem
 
-secRoles = [role.find('id').text
-	for role in xmlRoot.findall('./roles/role')
-	if set(primRoles) & set(rolesRoles(role))]
+# get a list of roles having the role with a given name
+def whoHasRole(roleName):
+	return ((subRole, whoHasRole(roleId(subRole)))
+		for subRole in xmlRoot.findall('./roles/role')
+		if roleName in map(lambda elem: elem.text, subRole.findall('roles/role')))
+
+secRoles = map(roleId,
+	flatten(map(lambda role: whoHasRole(role), primRoles)))
 
 allRoles = set(primRoles) | set(secRoles)
 
@@ -57,4 +71,4 @@ if allRoles:
 	if allRoles & set(usersRoles(user))]
 	
 	if users:
-		print 'Users:\n\t' + '\n\t'.join(users)
+		print 'Users:\n\t' + '\n\t'.join(set(users))
