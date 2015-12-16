@@ -40,12 +40,12 @@ primRoles = [roleId(role)
 
 # flatten a list of lists
 def flatten(aList):
-    for anElem in aList:
-        if hasattr(anElem, '__iter__') and not hasattr(anElem, 'split'):
-            for subElem in flatten(anElem):
-                yield subElem
-        else:
-            yield anElem
+	for anElem in aList:
+		if hasattr(anElem, '__iter__') and not hasattr(anElem, 'split'):
+			for subElem in flatten(anElem):
+				yield subElem
+		else:
+			yield anElem
 
 # get a list of the ids of the elements' roles
 getRoles = lambda elem: map(lambda role: role.text, elem.findall('roles/role'))
