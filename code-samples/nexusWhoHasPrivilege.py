@@ -8,7 +8,7 @@ import xml.etree.ElementTree as tree
 xmlPath = '/opt/webapps/sonatype-work/nexus/conf/security.xml'
 
 if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
-	sys.stderr.write('Usage: %s roleName\n' % sys.argv[0])
+	sys.stderr.write('Usage: %s nameOfPrivilege\n' % sys.argv[0])
 	sys.exit(1)
 
 privName = sys.argv[1]
