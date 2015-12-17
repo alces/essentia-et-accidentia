@@ -62,12 +62,12 @@ secRoles = map(roleId,
 allRoles = set(primRoles) | set(secRoles)
 
 if allRoles:
-	print 'Roles:\n\t' + '\n\t'.join(allRoles)
+	print 'Roles:\n\t' + '\n\t'.join(sorted(allRoles))
 
 	# get users belonging to these roles
 	users = [user.find('userId').text
-	for user in xmlRoot.findall('./userRoleMappings/userRoleMapping')
-	if allRoles & set(getRoles(user))]
+		for user in xmlRoot.findall('./userRoleMappings/userRoleMapping')
+		if allRoles & set(getRoles(user))]
 	
 	if users:
-		print 'Users:\n\t' + '\n\t'.join(set(users))
+		print 'Users:\n\t' + '\n\t'.join(sorted(set(users)))
