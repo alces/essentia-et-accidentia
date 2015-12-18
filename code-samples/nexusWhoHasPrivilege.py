@@ -18,7 +18,7 @@ xmlRoot = tree.parse(xmlPath).getroot()
 getId = lambda elem: elem.find('id').text
 
 # search for the privilege's id
-privs = [priv.find('id').text
+privs = [getId(priv)
 	for priv in xmlRoot.findall('./privileges/privilege')
 	if priv.find('name').text == privName]
 if privs:
