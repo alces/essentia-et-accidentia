@@ -14,6 +14,9 @@ if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
 privName = sys.argv[1]
 xmlRoot = tree.parse(xmlPath).getroot()
 
+# get id from XML element
+getId = lambda elem: elem.find('id').text
+
 # search for the privilege's id
 privs = [priv.find('id').text
 	for priv in xmlRoot.findall('./privileges/privilege')
@@ -29,10 +32,7 @@ else:
 # get a list of role's privileges
 rolesPrivs = lambda role: map(lambda priv: priv.text, role.findall('./privileges/privilege'))
 
-# get role id
-roleId = lambda role: role.find('id').text
-
-primRoles = [roleId(role)
+primRoles = [getId(role)
 	for role in xmlRoot.findall('./roles/role')
 	if privId in rolesPrivs(role)]
 
@@ -52,11 +52,11 @@ getRoles = lambda elem: map(lambda role: role.text, elem.findall('roles/role'))
 
 # get a list of roles having the role with a given name
 def whoHasRole(roleName):
-	return ((subRole, whoHasRole(roleId(subRole)))
+	return ((subRole, whoHasRole(getId(subRole)))
 		for subRole in xmlRoot.findall('./roles/role')
 		if roleName in getRoles(subRole))
 
-secRoles = map(roleId,
+secRoles = map(getId,
 	flatten(map(lambda role: whoHasRole(role), primRoles)))
 
 allRoles = set(primRoles) | set(secRoles)
