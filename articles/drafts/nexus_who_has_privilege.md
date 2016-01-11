@@ -7,13 +7,13 @@ categories: [Python, xml, Nexus]
 ---
 ![](http://uploads6.wikiart.org/images/gustave-dore/don-quixote-22.jpg)
 
-If you use [Sonatype Nexus™](http://www.sonatype.com/nexus/try-compare-buy/free-downloads) in order to store your build artefacts and have quite a few repositories, roles, and users configured in it, you likely have already become disillusioned about its web interface. For example, it's not difficult to see a list of the roles a given user has, but there's no way to see a list of the users having a given role. In this article, we're going to write a Python script parsing Nexus XML configuration file and printing out a list of the users and roles having a given privilege (**privilege** in the Nexus' jargon is the permission to do something with the artifacts stored in the certain repository.) 
+If you use [Sonatype Nexus™](http://www.sonatype.com/nexus/try-compare-buy/free-downloads) in order to store your build artifacts and have quite a few repositories, roles, and users configured in it, you likely have already become disillusioned about its web interface. For example, it's not difficult to see a list of the roles a given user has, but there's no way to see a list of the users having a given role. In this article, we're going to write a Python script parsing Nexus XML configuration file and printing out a list of the users and roles having a given privilege (**privilege** in the Nexus' jargon is the permission to do something with the artifacts stored in the certain repository.) 
 
-Nexus stores its data about users' and groups' rights in a file named `security.xml` and placed in `${nexus-work}/conf` directory. Figuring out what **nexus-work** is equal to in your particular case is a bit tricky, so let's consider its possible values for the different kinds of Nexus setup:   
+Nexus stores its data about the users' and groups' rights in a file named `security.xml` and placed in `${nexus-work}/conf` directory. Figuring out what **nexus-work** is equal to in your particular case is a bit tricky, so let's consider its possible values for the different kinds of Nexus setup:   
 
 * If you run Nexus atop its built-in Jetty application server, **nexus-work** by default is `${bundleBasedir}/../sonatype-work/nexus` (where `bundleBasedir` is the directory you've unzipped Nexus distribution archive into), and can be changed by assigning `nexus-work` property in `${bundleBasedir}/conf/nexus.properties` file to a desired value.
 
-* In the case of Nexus installed as a WAR file atop an application server such as Tomcat or Glassfish, **nexus-work** will be `${user.home}/sonatype-work/nexus` by default (where **user.home** is the home directory of the user the application server is running on behalf of.) In order to change this value, look for `nexus.properties` file in `WEB-INF/classes` subdirectory inside the directory in which your application server has unrolled Nexus WAR file.
+* In the case of Nexus installed as a WAR file atop an application server of your choice (such as Tomcat or Glassfish), **nexus-work** will be `${user.home}/sonatype-work/nexus` by default (where **user.home** is the home directory of the user the application server is running on behalf of.) In order to change this value, look for `nexus.properties` file in `WEB-INF/classes` subdirectory inside the directory your application server has unrolled Nexus WAR file into.
 
 So, let's say, we've already learnt where our `security.xml` file is, and I'll reference the path to it simply as **xmlPath**. Also, the name of the privilege we're going to investigate about will be metioned as **privName**. The first thing we've to do is to parse the XML file into an Element Tree:
 
@@ -108,7 +108,7 @@ primRoles = [getId(role)
 	if privId in rolesPrivs(role)]
 ```
 
-Here and bellow I imply that role's ids have values having some meanings for human beings - simply because it was done this way in all the Nexus installations I've seen in the real world. Otherwise, you likely would like to use a dictionary of roles' names indexed by their ids instead of a plain list.
+Here and bellow I imply that role's ids have values having some meanings for human beings - simply because it has been done this way in all the Nexus installations I've seen in the real world. Otherwise, you likely would like to use a dictionary of roles' names indexed by their ids instead of a plain list.
 
 For now, the task of finding roles having a given privilege isn't completed yet. As you might have already noticed, roles in Nexus can have roles by themself, so we've to look for all the roles having the roles from **primRoles** list and then all the roles having those roles recursively. Let's continue writing few helper functions more. The next one returns a list of all the roles a given XML element has:
 
@@ -126,7 +126,7 @@ def whoHasRole(roleName):
 		if roleName in getRoles(subRole)]
 ```
 
-Next, we make this list flat by [the function described in this blog earlier](http://essentia-et-accidentia.logdown.com/posts/335120) and make the final list of all the roles effectively having the privilege we're interested in:
+Next, we make this list flat by the [function described in this blog earlier](http://essentia-et-accidentia.logdown.com/posts/335120) and construct the final list of all the roles effectively having the privilege we're interested in:
 
 ```
 secRoles = map(getId,
@@ -169,7 +169,7 @@ if users:
 	print 'Users:\n\t' + '\n\t'.join(sorted(set(users)))
 ```
 
-(note that the users' list is converted to a set, becase one user could have more than one role having the same privilege, so it would be mentioned in our list many times)
+(note that we've to convert the users' list to a set, becase one user could have more than one role having the same privilege, so it would be mentioned in our list many times)
 
 The full source of the script described above can be found on [my gitlab page](https://github.com/alces/essentia-et-accidentia/blob/master/code-samples/nexusWhoHasPrivilege.py).
 
