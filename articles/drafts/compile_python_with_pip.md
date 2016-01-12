@@ -35,7 +35,7 @@ The first thing we have to do is installing Python's build dependencies:
 
 Technically speaking, you could build Python having **gcc** and **make** only, but I think, you wouldn't get much fun from Python built without openssl and readline. Without openssl, such a widely-used tool as pip wouldn't work at all, and without readline you couldn't use arrow keys in order to navigate through commands' history while running Python interpreter interactively. You also might think of another developer packages required for your specific use case (e.g., **bzip2-devel** or **sqlite-devel**.)
 
-Next, let's download archive with Python's sources from the project's site and unpack it:
+Next, let's download an archive with Python's sources from the project's site and unpack it:
 
 ```
   - name: Download Python source
@@ -50,7 +50,7 @@ Next, let's download archive with Python's sources from the project's site and u
       copy: no
 ```
 
-The way Python can be built resemble to the one of many other Unix programs: configure and make. Note that while using Ansible **shell** module, we've to set its **creates** argument in order to make our tasks somewhat idempotent:
+The way Python can be built resemble to the one of many other Unix programs: **configure** then **make**. Note that while using Ansible **shell** module, we've to set its **creates** argument in order to make our tasks somewhat idempotent:
 
 ```
   - name: Configure Python
