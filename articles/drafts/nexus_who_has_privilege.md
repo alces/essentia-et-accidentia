@@ -50,7 +50,7 @@ Here's an example of XML sctructure Nexus uses to store data about privileges:
 </privileges>
 ```
 
-All the references to the privilege in other places of the XML tree are made by its id, so we've to find out, which id corresponds to **privName**. In order to don't repeat ourselves too much, let's create a few simple helper functions. The first one just extract id from an XML element describing a privilege (it also can be used with other XML elements having a subelement named 'id' inside them):
+All the references to the privilege in other places of the XML tree are made by its id, so we've to find out, which id corresponds to **privName**. In order to don't repeat ourselves too much, let's create a few simple helper functions. The first one just extracts id from an XML element describing a privilege (it also can be used with other XML elements having a subelement named 'id' inside them):
 
 ```
 getId = lambda anElem: anElem.find('id').text
@@ -71,7 +71,7 @@ else:
 	sys.exit(1)
 ```
 
-Privileges in Nexus can't be assigned directly to users (only to roles), so our next task is to find roles having a privilege with id equal to **privId** we've found at the previous step. Sample structure of a role's record in `security.xml` looks like this:
+Privileges in Nexus can't be assigned directly to users (only to roles), so our next task is to find roles having a privilege with id equal to **privId** we've found at the previous step. A sample structure of a role's record in `security.xml` looks like this:
 
 ```
 <roles>
@@ -108,7 +108,7 @@ primRoles = [getId(role)
 	if privId in rolesPrivs(role)]
 ```
 
-Here and bellow I imply that role's ids have values having some meanings for human beings - simply because it has been done this way in all the Nexus installations I've seen in the real world. Otherwise, you likely would like to use a dictionary of roles' names indexed by their ids instead of a plain list.
+Here and bellow I imply that role's ids have values which aren't fully meaningless for human beings (simply because it has been done this way in all the Nexus installations I've seen in the real world.) Otherwise, you likely would use a dictionary of roles' names indexed by their ids instead of a plain list.
 
 For now, the task of finding roles having a given privilege isn't completed yet. As you might have already noticed, roles in Nexus can have roles by themself, so we've to look for all the roles having the roles from **primRoles** list and then all the roles having those roles recursively. Let's continue writing few helper functions more. The next one returns a list of all the roles a given XML element has:
 
