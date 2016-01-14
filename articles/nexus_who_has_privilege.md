@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Finding out Who Has Right to Do What in Nexus'
-date: 2015-12-16 11:26
+date: 2016-01-14 15:25
 comments: true
 categories: [Python, xml, Nexus]
 ---
