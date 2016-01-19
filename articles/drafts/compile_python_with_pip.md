@@ -7,7 +7,7 @@ categories: [Python, Linux, virtualenv, pip, Ansible]
 ---
 ![](http://uploads7.wikiart.org/images/gustave-dore/don-quixote-117.jpg)
 
-Linux from RHEL 6 family are already shipped with Python-2.6.6 out-of-box, which works okay in most the practical cases, and RHEL 7 has - even better - Python-2.7.5 on board. But could you imagine any fervent Python lover satisfied by these outmoded releases? Neither do I, so in this article we're going to install on our RHEL the latest Python compiled from sources. The process will be described in the terms of Ansible tasks, because - in comprasion with the plain old shell commands - they seem to covey their inital purpose in much more clear manner. In order to get rid of large chunks of repeating text, our tasks will use some varibles. Their values I've set in my testing environment are the follows (of course, you might want to change some of them):
+Linux distributions from RHEL-6 family are already shipped with Python-2.6.6 out-of-box, which works okay in the most practical cases, and RHEL-7 has - even better - Python-2.7.5 on board. But could you imagine any fervent Python lover satisfied by these outmoded releases? Neither do I, so in this article we're going to install on our RHEL the latest Python compiled from sources. The process will be described in the terms of Ansible tasks, because - in comprasion with the plain old shell commands - they seem to covey their inital purpose in much more clear manner. In order to get rid of large chunks of repeating text, our tasks will use some variables. Their values I've set in my testing environment are the following (of course, you might want to change some of them):
 
 ```
   vars:
@@ -50,7 +50,7 @@ Next, let's download an archive with Python's sources from the project's site an
       copy: no
 ```
 
-The way Python can be built resemble to the one of many other Unix programs: **configure** then **make**. Note that while using Ansible **shell** module, we've to set its **creates** argument in order to make our tasks somewhat idempotent:
+The way Python can be built resemble to the one of many other Unix programs: **configure**, then **make**. Note that while using Ansible **shell** module, we've to set its **creates** argument in order to make our tasks somewhat idempotent:
 
 ```
   - name: Configure Python
@@ -99,7 +99,7 @@ The actual content of `pip_install.yml` would be the following:
     creates: "{{ python_bin_dir }}/pip"
 ```
 
-Note that we use the newly installed Python to run the last command instead of default `/usr/bin/python` shipped with your system. We do so in to order to install **pip** not into the default `/usr/bin` but under **python_install_dir**.
+Note that we use the newly installed Python to run the last command instead of default `/usr/bin/python` shipped with our system. We do so in to order to install **pip** not into the default `/usr/bin` but under **python_install_dir**.
 
 But you might don't want to install **pip** at all, because if you were to use **virtualenv**, it would install **pip** automatically for each newly creating environment. The simplest way to install **virtualenv** I know is the following:
 
@@ -124,7 +124,7 @@ source ansible19/bin/activate
 pip install ansible
 ```
 
-But if you want to install some package having binary dependencies into a virtual environment, you still have to install the libraries it's depend on system-wide (e.g., `pip install pycrypto` will succeed only if you've **gmp-devel** RPM installed.)
+But if you want to install some package having binary dependencies into a virtual environment, you still have to install the libraries they depend on system-wide (e.g., `pip install pycrypto` will succeed only if you've **gmp-devel** RPM installed.)
 
 The last thing I want to add is that Ansible has [pip module](http://docs.ansible.com/ansible/pip_module.html), which already knows how to install Python packages into virtual environments, even how to automatically create virtual environments in a case they don't exist, but it doesn't support binding the target environment to some non-default Python installation (they said this feature would be implemented in 2.0.0 release of Ansible.) Nothing is perfect in the world!
 
