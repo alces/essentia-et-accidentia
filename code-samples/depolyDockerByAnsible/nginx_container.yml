@@ -1,0 +1,22 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Install nginx docker container
+  hosts: docker
+  tasks:
+  - name: Create web data container
+    docker:
+      name: webdata
+      image: busybox
+      state: present
+      volumes:
+      - /var/www/html:/usr/share/nginx/html:ro
+
+  - name: Start nginx container
+    docker:
+      name: webserver
+      image: nginx
+      ports:
+      - "8080:80"
+      restart_policy: always
+      volumes_from:
+      - webdata

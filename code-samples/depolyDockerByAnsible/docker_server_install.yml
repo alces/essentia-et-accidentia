@@ -1,0 +1,80 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Install Docker daemon
+  hosts: docker
+  vars:
+    docker_service_file: /usr/lib/systemd/system/docker.service
+    docker_daemon_opts:
+    - "-H fd://"
+    - "--selinux-enabled=false"
+  tasks:
+  - name: Disable firewall
+    service:
+      name: firewalld
+      enabled: no
+      state: stopped
+
+  - name: Install docker repository
+    template:
+      src: docker-main.repo.j2
+      dest: /etc/yum.repos.d/docker-main.repo
+      owner: root
+      mode: 0644
+
+  - name: Install docker
+    yum:
+      name: "{{ item }}"
+    with_items:
+    - docker-engine
+    - docker-python
+
+  - name: Create docker configuration
+    template:
+      src: docker.j2
+      dest: /etc/sysconfig/docker
+      owner: root
+      mode: 0644
+    notify:
+    - restart docker
+
+  - name: Add path to configuration file to docker service definition
+    lineinfile:
+      name: "{{ docker_service_file }}"
+      line: 'EnvironmentFile=/etc/sysconfig/docker'
+      insertafter: '^\[Service\]$'
+    notify:
+    - reload systemd
+    - restart docker
+
+  - name: Add options substitution to docker service definition
+    replace:
+      name: "{{ docker_service_file }}"
+      regexp: '^(ExecStart=/usr/bin/docker daemon) .+$'
+      replace: '\1 $OPTIONS'
+    notify:
+    - reload systemd
+    - restart docker
+
+  - name: Start docker services
+    service:
+      name: "{{ item }}"
+      enabled: yes
+      state: running
+    with_items:
+    - docker.socket
+    - docker
+
+  - name: Add vagrant user to docker group
+    user:
+      name: vagrant
+      groups: docker
+      append: yes
+
+  handlers:
+  - name: reload systemd
+    shell: systemctl daemon-reload
+
+  - name: restart docker
+    service:
+      name: docker
+      state: restarted
