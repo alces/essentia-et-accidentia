@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Installing a Fresh Python Version on RHEL 6/7'
-date: 2015-12-21 16:02
+date: 2016-01-20 11:08
 comments: true
 categories: [Python, Linux, virtualenv, pip, Ansible]
 ---
