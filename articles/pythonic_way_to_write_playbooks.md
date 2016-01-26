@@ -1,13 +1,13 @@
 ---
 layout: post
 title: 'Employing your Python Skills while Writing Ansible Playbooks'
-date: 2015-12-24 13:36
+date: 2016-01-26 10:45
 comments: true
 categories: [Python, jinja2, Ansible]
 ---
 ![](http://uploads6.wikiart.org/images/gustave-dore/don-quixote-11.jpg)
 
-From a technical point of view, Ansible playbooks are YAML files with variables' substitutions implemeted via Jinja2 templates. In case of you want to make some manipulations with this variables besides simple values' sustitution, Jinja2 has support of some kind of functions called 'filters'. Syntax of their invocation reselmbles that for plain old shell pipes and described in details [here](http://jinja.pocoo.org/docs/dev/templates/#list-of-builtin-filters). But as long as Jinja2 variables present Python objects, it's also possible to manipulate with them using the experience you've gaining during writing scripts in Python. The following article describes some of this Pythonic hacks available for an Ansible playbook writer.
+From a technical point of view, Ansible playbooks are YAML files with variables' substitutions implemeted via Jinja2 templates. In case you want to make some manipulations with this variables besides simple values' sustitution, Jinja2 has support of some kind of functions called 'filters'. Syntax of their invocation reselmbles that for plain old shell pipes and described in details [here](http://jinja.pocoo.org/docs/dev/templates/#list-of-builtin-filters). But, as long as Jinja2 variables present Python objects, it's also possible to manipulate with them using the experience you've gaining during writing scripts in Python. The following article describes some of this Pythonic hacks available for an Ansible playbook writer.
 
 In order to start from simple things, let's demonstrate that Ansible variables assigned to string values support the same methods Python **str** class does. For example, you can convert a string to the upper case:
 
@@ -43,7 +43,7 @@ String operators also work. So, it'll be possible to concatenate strings:
       msg: "java_home={{ java_root + '/jdk' + jdk_ver }}"
 ```
 
-or to insert formatted values into a string using **%** operator (I should admit, it's the my favorite one in Python):
+or to insert formatted values into a string using **%** operator (and I should admit, it's the my favorite one in Python):
 
 ```
   vars:
@@ -59,7 +59,7 @@ or to insert formatted values into a string using **%** operator (I should admit
 
 ```
 
-Note that we define such Python types as tuple and dict using exactly the same form we would use in Python.
+Note that we define such Python types as tuple and dictionary using exactly the same form we would use in Python.
 
 If you rather want to follow the latest Python fashion and use **format** method instead of **%** operator, you can do so in Ansible as well:
 
@@ -76,7 +76,7 @@ If you rather want to follow the latest Python fashion and use **format** method
       msg: "java_bin={{ '{root}/jdk{ver}/bin'.format(ver = jdk_ver, root = java_root) }}"
 ```
 
-A string also can be splitted in a list and an element from this list can be selected by its index:
+A string also can be splitted in a list, and an element from this list can be selected by its index:
 
 ```
   vars:
@@ -110,7 +110,7 @@ But that one doesn't work, because we have no Python built-in functions availabl
 next_java_minor_version={{ int(jdk_ver.split('.')[1]) +1 }}
 ```
 
-In order to convert string into integer, instead of Python **int** function we must you the Jinja2 filter with the same name, but working with Jinja2 filters is out of scope of the article.
+In order to convert a string into integer, instead of Python **int** function we must you the Jinja2 filter with the same name, but working with Jinja2 filters is out of scope of the article.
 
 Variables defined in Ansible playbook can be not only the strings and integers but the lists and dictionaries too. They can be defined using a YAML-like way:
 
@@ -139,7 +139,7 @@ vars:
 
 Note that quotes aren't required even if the keys or values contain spaces.
 
-Lists' elements can be addressed by their indexes (you've already seen the syntax), values of dicts - by their keys. Both the classical Pythonic syntax using square-brackets and the short syntax using dots are supported:
+Lists' elements can be addressed by their indexes (you've already seen the syntax), values of the dictionaries - by their keys. Both the classical Pythonic syntax using square-brackets and the short syntax using dots are supported:
 
 ```
   - name: Getting dict element by [] operator
@@ -153,7 +153,7 @@ Lists' elements can be addressed by their indexes (you've already seen the synta
 
 Note that quotes around a key are required in the first case and forbidden in the second one.
 
-All the standard Python methods and operators (every true Python guy knows that they're essentially the methods too) work as expected. For example, we can get a list of dict's keys and concatenate this list with another:
+All the standard Python methods and operators (and the true Python guys know that they're essentially the methods too) work as expected. For example, we can get a list of dictionary's keys and concatenate this list with another:
 
 ```
   - name: Getting dict's keys and concatenating lists
