@@ -1,0 +1,9 @@
+pg_data = '/var/lib/postgresql/data'
+
+Vagrant.configure(2) do |config|
+  config.vm.box = 'AntonioMeireles/coreos-alpha'
+  config.vm.network :private_network, ip: '192.168.1.101'
+  config.vm.provision :docker do |dock|
+    dock.run 'postgres', args: "-p 5432:5432 -v #{pg_data}:#{pg_data} -e POSTGRES_PASSWORD=pg123456"
+  end
+end

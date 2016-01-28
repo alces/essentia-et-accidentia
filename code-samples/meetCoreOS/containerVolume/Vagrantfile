@@ -1,0 +1,12 @@
+build_dir = '/var/tmp'
+
+Vagrant.configure(2) do |config|
+  config.vm.box = 'AntonioMeireles/coreos-alpha'
+  config.vm.network :private_network, ip: '172.16.2.101'
+  config.vm.provision :file, source: 'Dockerfile', destination: "#{build_dir}/Dockerfile"
+  config.vm.provision :docker do |dock|
+    dock.build_image build_dir, args: '-t pgdata'
+    dock.run 'pgdata', cmd: true
+    dock.run 'postgres', args: "-p 5432:5432  --volumes-from=pgdata -e POSTGRES_PASSWORD=pg123456"
+  end
+end
