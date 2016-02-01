@@ -1,0 +1,15 @@
+[Unit]
+Description=TeamCity CI server
+After=network.target
+
+[Service]
+Type=forking
+User={{ teamcity_owner }}
+Group={{ teamcity_group }}
+EnvironmentFile={{ teamcity_env_file }}
+ExecStart={{ teamcity_init_script }} start
+ExecStop={{ teamcity_init_script }} stop {{ teamcity_timeout }} -force
+TimeoutSec={{ teamcity_timeout }}
+
+[Install]
+WantedBy=multi-user.target

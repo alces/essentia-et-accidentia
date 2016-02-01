@@ -1,0 +1,56 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Install TeamCity service
+  hosts: teamcity
+  vars:
+    services_dir: /usr/lib/systemd/system
+    teamcity_env_file: /etc/sysconfig/teamcity
+    teamcity_install_prefix: /opt
+    teamcity_memory_opts: "-Xms1024m -Xmx1024m -XX:PermSize=512m -XX:MaxPermSize=512m"
+    teamcity_owner: teamcity
+    teamcity_group: teamcity
+    teamcity_home: "/home/{{ teamcity_owner }}"
+    teamcity_root_dir: "{{ teamcity_install_prefix }}/TeamCity"
+    teamcity_data_dir: "{{ teamcity_root_dir }}/data"
+    teamcity_init_script: "{{ teamcity_root_dir }}/bin/teamcity-server.sh"
+    teamcity_timeout: 30
+  tasks:
+  - name: Create TeamCity environment file
+    template:
+      src: teamcity-env.j2
+      dest: "{{ teamcity_env_file }}"
+    notify:
+    - restart teamcity
+
+  - name: Create TeamCity init script
+    template:
+      src: teamcity-init.j2
+      dest: /etc/init.d/teamcity
+      mode: 0755
+    when: ansible_distribution_major_version < '7'
+    notify:
+    - restart teamcity
+
+  - name: Create TeamCity service file
+    template:
+      src: teamcity.service.j2
+      dest: "{{ services_dir }}/teamcity.service"
+    when: ansible_distribution_major_version >= '7'
+    notify:
+    - reload systemd
+    - restart teamcity
+
+  - name: Start TeamCity service
+    service:
+      name: teamcity
+      enabled: true
+      state: running
+
+  handlers:
+  - name: reload systemd
+    shell: systemctl daemon-reload
+
+  - name: restart teamcity
+    service:
+      name: teamcity
+      state: restarted
