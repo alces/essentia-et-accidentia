@@ -1,0 +1,61 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Create Tomcat container for Docker
+  hosts: docker
+  vars_files:
+  - vars.yml
+  tasks:
+  - name: Install docker
+    apt:
+      name: docker.io
+      update_cache: yes
+
+  - name: Start docker service
+    service:
+      name: docker
+      state: running
+
+  - name: Download Tomcat archive
+    get_url:
+      url: "http://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+      dest: "{{ tmp_dir }}"
+
+  - name: Create build directory
+    file:
+      name: "{{ build_dir }}"
+      state: directory
+
+  - name: Unpack Tomcat distributuion
+    unarchive:
+      src: "{{ tmp_dir }}/{{ tomcat_arc_name }}"
+      dest: "{{ build_dir }}"
+      copy: no
+      creates: "{{ tomcat_stage_dir }}"
+
+  - name: Find .bat files inside bin subdirectory
+    find:
+      paths: "{{ tomcat_stage_dir }}/bin"
+      patterns: "*.bat"
+    register: tomcat_bat_files
+
+  - name: And delete them
+    file:
+      name: "{{ item.path }}"
+      state: absent
+    with_items: tomcat_bat_files.files
+
+  - name: Replace logging.properties for writing everything to stdout
+    copy:
+      src: logging.properties
+      dest: "{{ tomcat_stage_dir }}/conf"
+
+  - include: remove_access_logs.yml
+    when: remove_access_logs
+
+  - name: Create Dockerfile
+    template:
+      src: Dockerfile.j2
+      dest: "{{ build_dir }}/Dockerfile"
+
+  - name: Build Docker image
+    shell: "docker build -t tomcat {{ build_dir }}"

@@ -1,0 +1,16 @@
+- name: Open a comment around access log valve
+  replace:
+    name: "{{ tomcat_server_xml }}"
+    regexp: '^(\s+)(<Valve className="org\.apache\.catalina\.valves\.AccessLogValve".*)$'
+    replace: '\1<!-- \2'
+
+- name: And close this comment
+  replace:
+    name: "{{ tomcat_server_xml }}"
+    regexp: '^(\s+pattern="%h %l %u %t &quot;%r&quot; %s %b" />[\t ]*)$'
+    replace: '\1 -->'
+
+- name: Remove logs subdirectory
+  file:
+    name: "{{ tomcat_stage_dir }}/logs"
+    state: absent

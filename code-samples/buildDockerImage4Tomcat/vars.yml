@@ -1,0 +1,11 @@
+build_dir: /var/stage/tomcat
+remove_access_logs: no
+tmp_dir: /var/tmp
+tomcat_version: 8.0.30
+tomcat_owner: tomcat
+tomcat_target_dir: /opt/tomcat
+tomcat_dir_name: "apache-tomcat-{{ tomcat_version }}"
+tomcat_arc_name: "{{ tomcat_dir_name }}.tar.gz"
+tomcat_major_version: "{{ tomcat_version.split('.')[0] }}"
+tomcat_stage_dir: "{{ build_dir }}/{{ tomcat_dir_name }}"
+tomcat_server_xml: "{{ tomcat_stage_dir }}/conf/server.xml"

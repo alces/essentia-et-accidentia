@@ -1,0 +1,16 @@
+FROM java:8-jre
+MAINTAINER Alexey Zalesnyi
+
+COPY {{ tomcat_dir_name }} {{ tomcat_target_dir }}
+{% if tomcat_owner != 'root' %}
+RUN useradd {{  tomcat_owner }} && chown -R {{ tomcat_owner }}:{{ tomcat_owner }} {{ tomcat_target_dir }}
+{% endif %}
+EXPOSE 8080 8443
+{% if not remove_access_logs %}
+VOLUME ["/opt/tomcat/logs"]
+{% endif %}
+{% if tomcat_owner == 'root' %}
+CMD ["{{ tomcat_target_dir }}/bin/catalina.sh", "run"]
+{% else %}
+CMD ["su", "-c", "{{ tomcat_target_dir }}/bin/catalina.sh run", "{{ tomcat_owner }}"]
+{% endif %}
